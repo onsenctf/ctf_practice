@@ -22,3 +22,72 @@
 
     ```
 - writeupを書く際に必要になった画像ファイルなどは， `assets` ディレクトリに置きましょう．
+
+## テンプレート作成ツール
+
+このリポジトリには、CTFのWriteup用ディレクトリとファイルを自動生成するツール `writeup` が含まれています。
+
+### インストール方法
+
+1. `~/opt/bin` ディレクトリをPATHに追加します：
+   ```bash
+   # .bashrc または .zshrc に追加
+   export PATH="$HOME/opt/bin:$PATH"
+   ```
+
+2. シェルを再起動するか、設定ファイルを再読み込みします：
+   ```bash
+   source ~/.bashrc  # または source ~/.zshrc
+   ```
+
+3. ツールをインストールします：
+   ```bash
+   cd utils
+   make
+   ```
+
+### 使い方
+
+#### 1. CTFイベント用ディレクトリの初期化
+
+```bash
+writeup init GENRE/EVENT_NAME
+```
+
+- `GENRE`: `crypto`, `forensics`, `misc`, `osint`, `pwn`, `reversing`, `web` のいずれか
+- `EVENT_NAME`: CTFイベント名（例: `hoge_CTF_2023`）
+
+例：
+```bash
+writeup init crypto/hoge_CTF_2023
+```
+
+#### 2. 問題用テンプレートの生成
+
+```bash
+cd GENRE/EVENT_NAME
+writeup add CHALLENGE_NAME
+```
+
+例：
+```bash
+cd crypto/hoge_CTF_2023
+writeup add My_Question1
+```
+
+このコマンドにより、以下の構造が自動生成されます：
+```
+My_Question1/
+├── README.md          # 問題の概要とSolutionへのリンク
+├── given_files/       # 問題ファイル置き場
+├── assets/           # Writeup用画像ファイル置き場
+└── solve/
+    └── writeup.md    # 解法の詳細
+```
+
+### アンインストール
+
+```bash
+cd utils
+make clean
+```
