@@ -37,7 +37,7 @@
 
 2. シェルを再起動するか、設定ファイルを再読み込みします：
    ```bash
-   source ~/.bashrc  # または source ~/.zshrc
+   source ~/.bashrc
    ```
 
 3. ツールをインストールします：
