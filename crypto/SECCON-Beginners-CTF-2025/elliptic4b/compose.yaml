@@ -1,0 +1,8 @@
+services:
+  elliptic4b:
+    build: ./
+    environment:
+      - FLAG=ctf4b{dummy_flag}
+    ports:
+      - ${PORT:-9999}:9999
+    restart: unless-stopped

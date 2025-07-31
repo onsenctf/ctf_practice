@@ -1,0 +1,8 @@
+services:
+  golden-ticket:
+    build: ./
+    environment:
+      - FLAG=ctf4b{dummy_flag}
+    ports:
+      - ${PORT:-9999}:9999
+    restart: always
