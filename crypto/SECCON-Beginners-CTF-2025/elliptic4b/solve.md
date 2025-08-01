@@ -61,7 +61,7 @@ if P.y == Q.y:
     exit(1)
 ```
 
-まず楕円曲線において、点 $P = (x, y)$ に対し $-P$ は $(x, -y)$ であるから、 $Q = -P = aP$ なる $a$ を選べばよい。また有限加法群の元 $g$ に対し $\operatorname{ord}(g) \cdot g = 0$ ゆえ $(\operatorname{ord}(g) - 1) \cdot g = -g$ である（ $\operatorname{ord}(g)$ は $g$ の位数を表す）。楕円曲線は有限加法群なので $a = \operatorname{ord}(P) - 1$ は条件を満たす。
+まず楕円曲線において、点 $P = (x, y)$ に対し $-P$ は $(x, -y)$ であるから、 $Q = -P = aP$ なる $a$ を選べばよい。また有限加法群の元 $g$ に対し $\verb|ord|(g) \cdot g = 0$ ゆえ $(\verb|ord|(g) - 1) \cdot g = -g$ である（ $\verb|ord|(g)$ は $g$ の位数を表す）。楕円曲線は有限加法群なので $a = \verb|ord|(P) - 1$ は条件を満たす。
 
 位数の計算には sage の `order` を使い、以下のように目的の $a$ を求める。
 

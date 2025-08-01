@@ -83,10 +83,8 @@ $$
 
 である。 $g$ は 512bit であるため $g < 2^{513}$ であり、 $q$ は 280bit であるため $q < 2^{281}$ である。よって
 
-$$
-\sqrt[3]{\frac{n - 2^{513 + 281} \cdot r}{r + 88}} < q (= k \cdot r + x) <  \sqrt[3]{\frac{n}{r + 88}}\\
-\iff \frac{\sqrt[3]{\frac{n - 2^{513 + 281} \cdot r}{r + 88}}}{r} < k + \frac{x}{r} \ (\fallingdotseq k) < \frac{\sqrt[3]{\frac{n}{r + 88}}}{r}
-$$
+$$\sqrt[3]{\frac{n - 2^{513 + 281} \cdot r}{r + 88}} < q (= k \cdot r + x) <  \sqrt[3]{\frac{n}{r + 88}}$$
+$$\iff \frac{\sqrt[3]{\frac{n - 2^{513 + 281} \cdot r}{r + 88}}}{r} < k + \frac{x}{r} \ (\fallingdotseq k) < \frac{\sqrt[3]{\frac{n}{r + 88}}}{r}$$
 
 が成り立つ。左辺と右辺の差を sage で求めることにより $k$ の探索範囲を計算すると、これは 2495とわかる。よって $k$ の探索は即座に完了する。したがって左辺値から探索を開始し $q$ を求めることによりフラグを得る。
 

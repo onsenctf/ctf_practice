@@ -45,32 +45,26 @@ def consume_ticket(enc: int = 0, dec: int = 0, golden: int = 0):
             print("Wrong :(")
 ```
 
-この74行目に到達するには、条件 `cipher.decrypt(answer[16:]) == challenge` を満たす必要がある。言い換えると、 AES-CBC で復号すると `challenge` になるような暗号文 $\verb|ans|$ と初期化ベクトル $\verb|IV'|$ を求める必要がある。そこで、AES のブロック復号関数を $D$ 、 `challenge` を 16 バイトごとに区切ったものを $\verb|chall| = \verb|chall|_0 \ || \ ... \ || \ \verb|chall|_5$ と呼び $\verb|ans|$ を 16 バイトごとに区切ったものを $\verb|ans| = \verb|ans|_0 \ || \ ... \ || \ \verb|ans|_5$ と呼ぶこととし、AES-CBC の定義に基づき、これを数式で表すと以下のようになる。
+この74行目に到達するには、条件 `cipher.decrypt(answer[16:]) == challenge` を満たす必要がある。言い換えると、 AES-CBC で復号すると `challenge` になるような暗号文 $\verb|ans|$ と初期化ベクトル $\verb|IV'|$ を求める必要がある。そこで、AES のブロック復号関数を $D$ 、 `challenge` を 16 バイトごとに区切ったものを $\verb|chall| = \verb|chall|_0 || ... || \verb|chall|_5$ と呼び $\verb|ans|$ を 16 バイトごとに区切ったものを $\verb|ans| = \verb|ans|_0 || ... || \verb|ans|_5$ と呼ぶこととし、AES-CBC の定義に基づき、これを数式で表すと以下のようになる。
 
-$$
-D(\verb|ans|_0) \oplus \verb|IV|' = \verb|chall|_0 \\
-D(\verb|ans|_1) \oplus \verb|ans|_0 = \verb|chall|_1 \\
-\cdots\\
-D(\verb|ans|_5) \oplus \verb|ans|_4 = \verb|chall|_5
-$$
+$$D(\verb|ans|_0) \oplus \verb|IV|' = \verb|chall|_0$$
+$$D(\verb|ans|_1) \oplus \verb|ans|_0 = \verb|chall|_1$$
+$$\cdots$$
+$$D(\verb|ans|_5) \oplus \verb|ans|_4 = \verb|chall|_5$$
 
 上式を求めるべき $\verb|IV'|$ および $\verb|ans|_i$ について整理すると
 
-$$
-\verb|IV'| = D(\verb|ans|_0) \oplus \verb|chall|_0 \\
-\verb|ans|_0 = D(\verb|ans|_1) \oplus \verb|chall|_1 \\
-\cdots \\
-\verb|ans|_4 = D(\verb|ans|_5) \oplus \verb|chall|_4 \\
-$$
+$$\verb|IV'| = D(\verb|ans|_0) \oplus \verb|chall|_0$$
+$$\verb|ans|_0 = D(\verb|ans|_1) \oplus \verb|chall|_1$$
+$$\cdots$$
+$$\verb|ans|_4 = D(\verb|ans|_5) \oplus \verb|chall|_4$$
 
 となる。また AES のブロック暗号化関数を $E$ とし $E(D(x)) = x$ であることを鑑みると、
 
-$$
-\verb|ans|_0 =  E(\verb|chall|_0 \oplus \verb|IV|') \\
-\cdots\\
-\verb|ans|_4 = E(\verb|chall|_4 \oplus \verb|ans|_3)\\
-\verb|ans|_5 = E(\verb|chall|_5 \oplus \verb|ans|_4)
-$$
+$$\verb|ans|_0 =  E(\verb|chall|_0 \oplus \verb|IV|')$$
+$$\cdots$$
+$$\verb|ans|_4 = E(\verb|chall|_4 \oplus \verb|ans|_3)$$
+$$\verb|ans|_5 = E(\verb|chall|_5 \oplus \verb|ans|_4)$$
 
 とも書ける。以降では、この性質を用いて $\verb|IV|', \verb|ans|$ を求めることを考える。
 
@@ -98,23 +92,17 @@ $$
 
 暗号化オラクルと復号オラクルへの入力はともに PKCS \#7 パディングされている。そこで、入力 $x$ をブロック長である 16 バイトに限定すると、これらのオラクル $\verb|Enc|, \verb|Dec|$ はそれぞれ、
 
-$$
-\verb|Enc|(x) = E(x \oplus \verb|IV|) \ || \ E(\verb|10...10| \oplus E(x \oplus \verb|IV|))\\
-\verb|Dec|(x) = D(x) \oplus \verb|IV| \ || \ D(\verb|10...10|) \oplus x
-$$
+$$\verb|Enc|(x) = E(x \oplus \verb|IV|) || E(\verb|10...10| \oplus E(x \oplus \verb|IV|))$$
+$$\verb|Dec|(x) = D(x) \oplus \verb|IV| || D(\verb|10...10|) \oplus x$$
 
 と書ける（ $\verb|IV|$ はサーバが選んだ初期化ベクトル）。このとき、 
 
-$$
-\verb|Dec|(\verb|10...10|) =  D(\verb|10...10|) \oplus \verb|IV|  \ || \ D(\verb|10...10|) \oplus \verb|10...10|
-$$
+$$\verb|Dec|(\verb|10...10|) =  D(\verb|10...10|) \oplus \verb|IV|  || D(\verb|10...10|) \oplus \verb|10...10|$$
 
 であるので、左のブロックと右のブロックを $m_0, m_1$ と書くとすると、
 
-$$
-\verb|IV| = m_0 \oplus m_1 \oplus \verb|10...10|  \\
-D(\verb|10...10|) =m_1 \oplus \verb|10...10|
-$$ 
+$$\verb|IV| = m_0 \oplus m_1 \oplus \verb|10...10|$$
+$$D(\verb|10...10|) =m_1 \oplus \verb|10...10|$$ 
 
 を得る。ここで $\verb|ans|_2 = \verb|10...10|$ を選べば、上述の性質より
 
@@ -124,23 +112,17 @@ $$
 
 が言える。また
 
-$$
-\verb|Dec|(\verb|ans|_1) = D(\verb|ans|_1) \oplus \verb|IV| \ || \ ...\\
-\verb|Dec|(\verb|ans|_0) = D(\verb|ans|_0) \oplus \verb|IV| \ || \ ...
-$$
+$$\verb|Dec|(\verb|ans|_1) = D(\verb|ans|_1) \oplus \verb|IV| || ...$$
+$$\verb|Dec|(\verb|ans|_0) = D(\verb|ans|_0) \oplus \verb|IV| || ...$$
 
 の各右辺の左ブロックに $\verb|IV|$ を xor することで $D(\verb|ans|_1), D(\verb|ans|_0)$ が求まることにより
 
-$$
-\verb|ans|_0 = D(\verb|ans|_1) \oplus \verb|chall|_1 \\
-\verb|IV|' = D(\verb|ans|_0) \oplus \verb|chall|_0
-$$
+$$\verb|ans|_0 = D(\verb|ans|_1) \oplus \verb|chall|_1$$
+$$\verb|IV|' = D(\verb|ans|_0) \oplus \verb|chall|_0$$
 
 を得る。以上より `DEC_TICKET` を3枚消費して $\verb|IV|', \verb|ans|_0, \verb|ans|_1, \verb|ans|_2$ が求まった。 次に、 $\verb|Enc|$ の定義より $i = 3, 4, 5$ に対し
 
-$$
-\verb|Enc|(\verb|chall|_i \oplus \verb|ans|_{i-1} \oplus \verb|IV|) = E(\verb|chall|_i \oplus \verb|ans|_{i-1}) \ || \ ... = \verb|ans|_i \ || \ ...
-$$
+$$\verb|Enc|(\verb|chall|\_i \oplus \verb|ans|\_{i-1} \oplus \verb|IV|) = E(\verb|chall|\_i \oplus \verb|ans|\_{i-1}) || ... = \verb|ans|\_i || ...$$
 
 であることから $\verb|ans|_i$ を得る。以上の計算行うプログラムを実行しフラグを得る。
 
